@@ -3,7 +3,22 @@ package io.ktor.http
 import kotlinx.io.charsets.*
 import kotlinx.io.core.*
 
-expect fun encodeURLQueryComponent(part: String): String
+fun encodeURLQueryComponent(part: String, charset: Charset = Charsets.UTF_8): String = buildString {
+    part.forEach {
+        when {
+            it == ' ' -> append('+')
+            it.toInt() in
+                    (30..41) +
+                    (43 .. 60)  -> {
+                val code = it.toInt().toString(radix = 16).padStart(2, '0')
+                append("%$code")
+            }
+            it == '!' -> append("%21")
+            else -> append(it)
+        }
+    }
+}
+
 
 fun encodeURLPart(part: String): String = encodeURLQueryComponent(part)
     .replace("+", "%20")
@@ -13,11 +28,16 @@ fun encodeURLPart(part: String): String = encodeURLQueryComponent(part)
     .replace("%7E", "~")
 
 fun decodeURLQueryComponent(
-    text: CharSequence, start: Int = 0, end: Int = text.length, charset: Charset = Charsets.UTF_8
+    text: CharSequence,
+    start: Int = 0, end: Int = text.length,
+    charset: Charset = Charsets.UTF_8
 ): String = decodeScan(text, start, end, true, charset)
 
-fun decodeURLPart(text: String, start: Int = 0, end: Int = text.length, charset: Charset = Charsets.UTF_8): String =
-    decodeScan(text, start, end, false, charset)
+fun decodeURLPart(
+    text: String,
+    start: Int = 0, end: Int = text.length,
+    charset: Charset = Charsets.UTF_8
+): String = decodeScan(text, start, end, false, charset)
 
 private fun decodeScan(text: CharSequence, start: Int, end: Int, plusIsSpace: Boolean, charset: Charset): String {
     for (index in start until end) {
@@ -108,4 +128,3 @@ private fun charToHexDigit(c2: Char) = when (c2) {
     in 'a'..'f' -> c2 - 'a' + 10
     else -> -1
 }
-

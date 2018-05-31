@@ -47,9 +47,9 @@ internal class JettyHttpRequest(
         val responseContext = CompletableDeferred<Unit>()
         val responseListener = JettyResponseListener(bodyChannel, dispatcher, responseContext)
 
-        val jettyRequest = withPromise<Stream> { promise ->
+        val jettyRequest = JettyHttp2Request(withPromise { promise ->
             session.newStream(headersFrame, promise, responseListener)
-        }.let { JettyHttp2Request(it) }
+        })
 
         sendRequestBody(jettyRequest, content)
 
