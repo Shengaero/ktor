@@ -32,4 +32,4 @@ fun URLBuilder.takeFrom(uri: URI) {
     uri.fragment?.let { fragment = it }
 }
 
-fun URLBuilder.takeFrom(url: java.net.URL) = takeFrom(url.toURI())
+fun URLBuilder.takeFrom(url: URL) = takeFrom(url.toURI())
