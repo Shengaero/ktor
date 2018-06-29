@@ -1,4 +1,4 @@
-package io.ktor.compat
+package io.ktor.util
 
 import kotlinx.io.core.*
 import kotlin.experimental.*

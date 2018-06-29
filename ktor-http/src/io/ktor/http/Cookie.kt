@@ -1,6 +1,6 @@
 package io.ktor.http
 
-import io.ktor.compat.*
+import io.ktor.util.*
 
 data class Cookie(
     val name: String,
@@ -92,7 +92,7 @@ fun renderSetCookieHeader(
     path: String? = null,
     secure: Boolean = false, httpOnly: Boolean = false,
     extensions: Map<String, String?> = emptyMap()
-,
+    ,
     includeEncoding: Boolean = true
 ): String = (
         listOf(

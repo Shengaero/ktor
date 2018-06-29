@@ -1,4 +1,4 @@
-package io.ktor.compat
+package io.ktor.util
 
 import kotlin.test.*
 
@@ -43,7 +43,7 @@ class Base64 {
             "" to ""
         )
 
-        cases.forEach { text, encodedText ->
+        cases.forEach { (text, encodedText) ->
             assertEquals(encodedText, text.encodeBase64())
             assertEquals(text, encodedText.decodeBase64())
         }

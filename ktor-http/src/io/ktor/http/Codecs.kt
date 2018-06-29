@@ -3,35 +3,47 @@ package io.ktor.http
 import kotlinx.io.charsets.*
 import kotlinx.io.core.*
 
-fun encodeURLQueryComponent(part: String, charset: Charset = Charsets.UTF_8): String = buildString {
-    part.forEach {
+/**
+https://tools.ietf.org/html/rfc3986#section-2
+ */
+private val URL_PROTOCOL_PART = listOf(
+    ':', '/', '?', '#', '[', ']', '@',  // general
+    '!', '$', '&', '\'', '(', ')', '*', ',', ';', '=',  // sub-components
+    '-', '.', '_', '~', '+' // unreserved
+).map { it.toByte() }
+
+private val URL_ALPHABET = (('a'..'z') + ('A'..'Z') + ('0'..'9')).map { it.toByte() }
+/**
+ * Encode url part as specified in
+ * https://tools.ietf.org/html/rfc3986#section-2
+ */
+fun encodeURLQueryComponent(
+    part: String,
+    encodeFull: Boolean = false,
+    spaceToPlus: Boolean = false,
+    charset: Charset = Charsets.UTF_8
+): String = buildString {
+    val content = charset.newEncoder().encode(part)
+    content.forEach {
         when {
-            it == ' ' -> append('+')
-            it.toInt() in
-                    (30..41) +
-                    (43 .. 60)  -> {
-                val code = it.toInt().toString(radix = 16).padStart(2, '0')
-                append("%$code")
-            }
-            it == '!' -> append("%21")
-            else -> append(it)
+            it == ' '.toByte() -> if (spaceToPlus) append('+') else append("%20")
+            it in URL_ALPHABET || (!encodeFull && it in URL_PROTOCOL_PART) -> append(it.toChar())
+            else -> append(it.percentEncode())
         }
     }
 }
 
 
-fun encodeURLPart(part: String): String = encodeURLQueryComponent(part)
-    .replace("+", "%20")
-    .replace("%2b", "+")
-    .replace("%2B", "+")
-    .replace("*", "%2A")
-    .replace("%7E", "~")
+/**
+ * Encode url-part string. Using url-parts, doesn't change url structure
+ */
+fun encodeURLPart(part: String): String = encodeURLQueryComponent(part, encodeFull = true)
 
 fun decodeURLQueryComponent(
     text: CharSequence,
     start: Int = 0, end: Int = text.length,
     charset: Charset = Charsets.UTF_8
-): String = decodeScan(text, start, end, true, charset)
+): String = decodeScan(text, start, end, false, charset)
 
 fun decodeURLPart(
     text: String,
@@ -122,9 +134,23 @@ private fun decodeImpl(
 
 class URLDecodeException(message: String) : Exception(message)
 
+private fun Byte.percentEncode(): String {
+    val code = (toInt() and 0xff).toString(radix = 16).toUpperCase()
+    return "%${code.padStart(length = 2, padChar = '0')}"
+}
+
 private fun charToHexDigit(c2: Char) = when (c2) {
     in '0'..'9' -> c2 - '0'
     in 'A'..'F' -> c2 - 'A' + 10
     in 'a'..'f' -> c2 - 'a' + 10
     else -> -1
+}
+
+private fun ByteReadPacket.forEach(block: (Byte) -> Unit) {
+    takeWhile { buffer ->
+        while (buffer.canRead()) {
+            block(buffer.readByte())
+        }
+        true
+    }
 }
