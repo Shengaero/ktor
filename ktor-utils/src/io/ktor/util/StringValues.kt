@@ -1,7 +1,5 @@
 package io.ktor.util
 
-import io.ktor.compat.*
-
 
 @Deprecated(
     "ValuesMap was split into Headers and Parameters, please choose type appropriate for the context",
@@ -116,7 +114,7 @@ open class StringValuesImpl(
 ) : StringValues {
 
     protected val values: Map<String, List<String>> by lazy {
-        if (caseInsensitiveName) caseInsensitiveMap<List<String>>(values.size).apply { putAll(values) } else values.toMap()
+        if (caseInsensitiveName) caseInsensitiveMap<List<String>>().apply { putAll(values) } else values.toMap()
     }
 
     override operator fun get(name: String) = listForKey(name)?.firstOrNull()
@@ -145,7 +143,7 @@ open class StringValuesImpl(
 
 open class StringValuesBuilder(val caseInsensitiveName: Boolean = false, size: Int = 8) {
     protected val values: MutableMap<String, MutableList<String>> =
-        if (caseInsensitiveName) caseInsensitiveMap(size) else LinkedHashMap(size)
+        if (caseInsensitiveName) caseInsensitiveMap() else LinkedHashMap(size)
     protected var built = false
 
     fun getAll(name: String): List<String>? = values[name]
@@ -239,7 +237,7 @@ fun valuesOf(map: Map<String, Iterable<String>>, caseInsensitiveKey: Boolean = f
         return StringValuesSingleImpl(caseInsensitiveKey, entry.key, entry.value.toList())
     }
     val values: MutableMap<String, List<String>> =
-        if (caseInsensitiveKey) caseInsensitiveMap(size) else LinkedHashMap(size)
+        if (caseInsensitiveKey) caseInsensitiveMap() else LinkedHashMap(size)
     map.entries.forEach { values.put(it.key, it.value.toList()) }
     return StringValuesImpl(caseInsensitiveKey, values)
 }
@@ -256,7 +254,7 @@ fun StringValues.flattenForEach(block: (String, String) -> Unit) = forEach { nam
 fun StringValues.filter(keepEmpty: Boolean = false, predicate: (String, String) -> Boolean): StringValues {
     val entries = entries()
     val values: MutableMap<String, MutableList<String>> =
-        if (caseInsensitiveName) caseInsensitiveMap(entries.size) else LinkedHashMap(entries.size)
+        if (caseInsensitiveName) caseInsensitiveMap() else LinkedHashMap(entries.size)
     entries.forEach { entry ->
         val list = entry.value.filterTo(ArrayList(entry.value.size)) { predicate(entry.key, it) }
         if (keepEmpty || list.isNotEmpty())
