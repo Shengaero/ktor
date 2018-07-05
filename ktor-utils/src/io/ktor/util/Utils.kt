@@ -1,4 +1,4 @@
-package io.ktor.compat
+package io.ktor.util
 
 interface Closeable {
     fun close()

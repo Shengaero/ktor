@@ -1,6 +1,5 @@
 package io.ktor.network.util
 
-import io.ktor.compat.Closeable
 import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.internal.*
 import java.util.concurrent.*

@@ -10,7 +10,7 @@ fun ByteArray.toNSData(): NSData = NSMutableData().apply {
 }
 
 fun NSData.toByteArray(): ByteArray {
-    val data: CPointer<ByteVar> = bytes!!.reinterpret<ByteVar>().ptr
+    val data: CPointer<ByteVar> = bytes!!.reinterpret()
     return ByteArray(length.toInt()) { index -> data[index] }
 }
 

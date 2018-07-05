@@ -72,7 +72,6 @@ class IosClientEngine(override val config: HttpClientEngineConfig) : HttpClientE
 
         nativeRequest.setHTTPMethod(request.method.value)
 
-
         launch(dispatcher) {
             val content = request.content
             val body = when (content) {

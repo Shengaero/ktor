@@ -12,7 +12,6 @@ konanArtifacts {
 
         dependencies {
             artifactktor_http_ios "org.jetbrains.kotlinx:kotlinx_io_native:$kotlinx_io_version"
-//            artifactktor_http_ios "org.jetbrains.kotlinx:kotlinx_coroutines_io_native:$kotlinx_io_version"
         }
     }
 }

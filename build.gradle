@@ -47,7 +47,7 @@ ext.publishLocal = project.hasProperty('publishLocal')
 
 def platformOf(Project project) {
     def commonModules = ['ktor-client-core', 'ktor-utils', 'ktor-http']
-    def nativeModules = ['ktor-client-ios', 'ktor-http-ios', 'ktor-utils-ios']
+    def nativeModules = ['ktor-client-ios', 'ktor-http-ios', 'ktor-utils-ios', 'ktor-client-core-ios']
 
     if (project.name in commonModules) return 'common'
     if (project.name in nativeModules) return 'native'
@@ -79,6 +79,7 @@ allprojects {
         } else if (kotlin_version.endsWith('-SNAPSHOT')) {
             maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         }
+        maven { url 'https://dl.bintray.com/qwwdfsad/kotlinx' }
     }
 
     sourceSets {

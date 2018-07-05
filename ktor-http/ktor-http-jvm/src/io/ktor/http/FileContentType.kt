@@ -1,6 +1,5 @@
 package io.ktor.http
 
-import io.ktor.compat.*
 import io.ktor.util.*
 import org.slf4j.*
 import java.io.*
