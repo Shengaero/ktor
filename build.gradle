@@ -22,7 +22,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintray_plugin_version"
         classpath 'net.researchgate:gradle-release:2.4.0'
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
 
@@ -60,8 +60,6 @@ allprojects {
     group = 'io.ktor'
     version = configuredVersion
 
-    apply from: rootProject.file("gradle/${platform}.gradle")
-
     repositories {
 //        mavenLocal()
         jcenter()
@@ -81,6 +79,8 @@ allprojects {
         }
         maven { url 'https://dl.bintray.com/qwwdfsad/kotlinx' }
     }
+
+    apply from: rootProject.file("gradle/${platform}.gradle")
 
     sourceSets {
         main {

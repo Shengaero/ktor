@@ -1,0 +1,12 @@
+println("publishing configure ${project.name}")
+
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+publishing {
+    repositories {
+        maven {
+            url  = 'https://dl.bintray.com/e5l/ktor'
+        }
+    }
+}
